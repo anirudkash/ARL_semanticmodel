@@ -1,3 +1,3 @@
-#### Semantic Segmentation Model 
+#### <center>Semantic Segmentation Model </center>
 
 ---
