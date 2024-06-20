@@ -40,6 +40,8 @@ num_classes = len(class_colors)
 
 # train_imgs_direc = '/home/anirud/Desktop/SemanticSeg/train-org-img-patches'
 # train_imgs_labs_direc = '/home/anirud/Desktop/SemanticSeg/ColorMasks-TrainSet-patches'
+
+
 train_imgs_direc = '/home/anirud/Desktop/SemanticSeg/TrainImgsOne'
 train_imgs_labs_direc = '/home/anirud/Desktop/SemanticSeg/MaskPatchesOne'
 
@@ -57,15 +59,16 @@ def load_images(img_direc, gt_direc):
     for fname in train_imgs_entries:
         path = os.path.join(img_direc, fname) 
         # might have to read in the image as gray scale 
-        img = cv2.imread(path)
+        img = cv2.imread(path, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (128, 128))
         train_imgs.append(img)
 
     for fname in train_imgs_labs_entries:
         path = os.path.join(gt_direc, fname)
-        img = cv2.imread(path)
+       # img = cv2.imread(path)
+       # img = cv2.resize(img, (128, 128))
+        img = cv2.imread(path, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (128, 128))
-       # img = cv2.imread(path, cv2.COLOR_BGR2RGB)
         train_imgs_labs.append(img)
 
     train_images = np.array(train_imgs)
@@ -126,35 +129,27 @@ model.evaluate(X_test, y_test, batch_size=16, verbose=1)
 print('Evaluting model...')
 y_test_argmax = np.argmax(y_test, axis=3)
 
-# try:
-#     while True:
-#         test_img_number = random.randint(0, len(X_test))
-#         print('test_img_number index: ', test_img_number)
-#         test_img = X_test[test_img_number]
-#         ground_truth = y_test_argmax[test_img_number]
-#         test_img_input = np.expand_dims(test_img, 0)
-#         prediction = (model.predict(test_img_input))
-#         predicted_img = np.argmax(prediction, axis=3)[0,:,:]
-#         plt.figure(figsize=(12,8))
-#         plt.subplot(231)
-#         plt.title('Test Image')
-#         plt.imshow(test_img)
-#         plt.subplot(232)
-#         plt.title('Groudn Truth')
-#         plt.imshow(ground_truth, cmap='jet')
-#         plt.subplot(233)
-#         plt.title('Generated Image (L_generated)')
-#         plt.imshow(predicted_img, cmap='jet')
-#         plt.show()
+try:
+    while True:
+        test_img_number = random.randint(0, len(X_test))
+        print('test_img_number index: ', test_img_number)
+        test_img = X_test[test_img_number]
+        ground_truth = y_test_argmax[test_img_number]
+        test_img_input = np.expand_dims(test_img, 0)
+        prediction = (model.predict(test_img_input))
+        predicted_img = np.argmax(prediction, axis=3)[0,:,:]
+        plt.figure(figsize=(12,8))
+        plt.subplot(231)
+        plt.title('Test Image')
+        plt.imshow(test_img)
+        plt.subplot(232)
+        plt.title('Groudn Truth')
+        plt.imshow(ground_truth)
+        plt.subplot(233)
+        plt.title('Generated Image (L_generated)')
+        plt.imshow(predicted_img)
+        plt.show()
 
-#         print('Done')
-# except KeyboardInterrupt:
-#     pass
-
-test_img_input = np.expand_dims((cv2.resize(cv2.imread('/home/anirud/Desktop/SemanticSeg/texas.tiff'),(128,128))), axis=3)
-
-prediction = model.predict(test_img_input)
-predicted_img = np.argmax(prediction, axis=3)[0,:,:]
-
-plt.imshow(predicted_img, cmap='jet')
-plt.show()
+        print('Done')
+except KeyboardInterrupt:
+    pass
